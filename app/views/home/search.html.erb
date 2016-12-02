@@ -1,0 +1,25 @@
+<h1>Listing Doctors</h1>
+ 
+<table>
+  <tr>
+    <th>Name</th>
+    <th>City</th>
+    <th>State</th>
+    <th>Specializations</th>
+    <th>Experience</th>
+    <th>Hospitals</th>
+  </tr>
+ 
+<% @doctors.each do |doctor| %>
+  <tr>
+    <td><%= doctor.FirstName %><%= doctor.MiddleName %><%= doctor.LastName %></td>
+    <td><%= doctor.City %></td>
+    <td><%= doctor.State %></td>
+    <td><%= doctor.PrimarySpec %>,<%= doctor.SecSpec1%>, <%= doctor.SecSpec2%>, <%= doctor.SecSpec3%>, <%= doctor.SecSpec4%>,<%= doctor.AllSecSpecs%> </td>
+    <td><%= Time.now.year - doctor.GradYear %></td>
+    <td><%= doctor.HosAffCCN1 %>,<%= doctor.HospAffLBN1%>, <%= doctor.HosAffCCN2%>, <%= doctor.HosAffLBN2%>, <%= doctor.HosAffCCN3%>,<%= doctor.HosAffLBN3%>,<%= doctor.HosAffCCN4%>,<%= doctor.HosAffLBN4%>,<%= doctor.HosAffCCN5%>,<%= doctor.HosAffLBN5%> </td>
+  </tr>
+<% end %>
+</table>
+ 
+<br>

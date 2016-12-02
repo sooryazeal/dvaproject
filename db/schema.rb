@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161130132028) do
+ActiveRecord::Schema.define(version: 20161130132032) do
 
   create_table "GroupPrac_COC", id: false, force: :cascade do |t|
     t.text    "OrgLegalName"
@@ -261,7 +261,7 @@ ActiveRecord::Schema.define(version: 20161130132028) do
     t.decimal "HeartFailurePatients"
     t.decimal "MedToImprovePumpingAction_HeartPatients"
     t.integer "physician_compare_id"
-    t.integer "group_prac_coc_id"
+    t.integer "pat_rat",                                 limit: 8
     t.integer "ep_public_reporting_id"
     t.integer "Total_Drug_Count",                        limit: 8
     t.decimal "Total_Drug_Cost",                                   default: "0.0"
@@ -272,7 +272,7 @@ ActiveRecord::Schema.define(version: 20161130132028) do
     t.string  "Form_of_Payment_or_Transfer_of_Value",              default: ""
     t.string  "Nature_of_Payment_or_Transfer_of_Value",            default: ""
     t.index ["ep_public_reporting_id"], name: "index_master_table_on_ep_public_reporting_id"
-    t.index ["group_prac_coc_id"], name: "index_master_table_on_group_prac_coc_id"
+    t.index ["pat_rat"], name: "index_master_table_on_pat_rat"
     t.index ["physician_compare_id"], name: "index_master_table_on_physician_compare_id"
   end
 

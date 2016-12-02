@@ -1,7 +1,9 @@
 namespace :import_data do
 	task :populate_master_table => :environment do
-		PhysicianCompare.where(nil).find_in_batches(batch_size: 1000) do |group|
+		a = GroupPatExp.all.map(&:G_PAC_ID)
+		PhysicianCompare.where(:G_PAC_ID => a).find_in_batches(batch_size: 1000) do |group|
 			group.each do |record|
+				next if record.master_table
 				entry = MasterTable.create(
 					:Gender => record.Gender,
 					:Credential => record.Credential,
@@ -21,7 +23,8 @@ namespace :import_data do
 					:CommittedHeartHealth => record.CommittedHeartHealth,
 					:GradYear => record.GradYear,
 					:NumGroupPracMembers => record.NumGroupPracMembers,
-					:ZipCode => record.ZipCode
+					:ZipCode => record.ZipCode,
+					:physician_compare_id => record.id
 					)
 				ep_entry = EpPublicReporting.where(:FirstName => record.FirstName, :LastName => record.LastName).first
 				group_prac = GroupPracCoc.where(:G_PAC_ID => record.G_PAC_ID).first
@@ -90,9 +93,36 @@ namespace :import_data do
 					entry.Total_Claim_Count += pres.Total_Claim_Count + pres.Total_Claim_Count_Ge65
 					entry.Total_Day_Supply += pres.Total_Day_Supply + pres.Total_Day_Supply_Ge65
 				end
-
 				entry.save!
 			end
 		end
+	end
+
+	task :add_phy => :environment do
+			i = 0
+			MasterTable.where("physician_compare_id is null").find_in_batches(batch_size: 10000) do |group|
+				i += 1
+				puts i.to_s + "\n"
+				group.each do |entry|
+					begin
+						phy = PhysicianCompare.where(:MedSchool => entry.MedSchool, 
+							:PrimarySpec => entry.PrimarySpec, 
+							:ZipCode => entry.ZipCode, 
+							:City=> entry.City, 
+							:State=> entry.State, 
+							:GradYear => entry.GradYear).first
+						if phy
+							entry.physician_compare_id = phy.id
+							entry.save!
+						end
+					rescue e => Exception
+						puts e.inspect
+					end
+				end
+			end
+	end
+
+	task :add_points => :environment do
+		exp = GroupPatExp.all
 	end
 end
