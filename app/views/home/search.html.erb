@@ -1,25 +1,33 @@
-<h1>Listing Doctors</h1>
+<p style="margin: 5%"><%= @count %> Doctors Found</p>
  
-<table>
-  <tr>
-    <th>Name</th>
-    <th>City</th>
-    <th>State</th>
-    <th>Specializations</th>
-    <th>Experience</th>
-    <th>Hospitals</th>
-  </tr>
+<table class="table" style= "border-spacing: 0 2em;
+    border-collapse: separate;">
  
 <% @doctors.each do |doctor| %>
-  <tr>
-    <td><%= doctor.FirstName %><%= doctor.MiddleName %><%= doctor.LastName %></td>
-    <td><%= doctor.City %></td>
-    <td><%= doctor.State %></td>
-    <td><%= doctor.PrimarySpec %>,<%= doctor.SecSpec1%>, <%= doctor.SecSpec2%>, <%= doctor.SecSpec3%>, <%= doctor.SecSpec4%>,<%= doctor.AllSecSpecs%> </td>
-    <td><%= Time.now.year - doctor.GradYear %></td>
-    <td><%= doctor.HosAffCCN1 %>,<%= doctor.HospAffLBN1%>, <%= doctor.HosAffCCN2%>, <%= doctor.HosAffLBN2%>, <%= doctor.HosAffCCN3%>,<%= doctor.HosAffLBN3%>,<%= doctor.HosAffCCN4%>,<%= doctor.HosAffLBN4%>,<%= doctor.HosAffCCN5%>,<%= doctor.HosAffLBN5%> </td>
+  <tr style="margin-top: 4%;margin-bottom: 4%;background-color: #eee;">
+    <td><%= "Dr " + doctor.FirstName.titleize + " "%><%= doctor.MiddleName.titleize + " " %><%= doctor.LastName.titleize %><br>
+    <%= doctor.City.titleize + ", "%><%= doctor.State %><br><br>
+    Specialization<br>
+    <% doctor.specializations.each do |spec| %>
+      <span class="label label-default" style="font-weight: normal;"><%= spec.titleize %></span>
+    <% end %>
+    </td>
+    <td> </td>
+    <td>Experience<br><br><span style="background: white; border-radius: 50px;padding: 10% 10%;border: 1px solid black;font-size: 12px;"> <%= (Time.now.year - doctor.GradYear).to_s + "+" %></span></td>
+    <td>Hospitals<br>
+      <% doctor.hospitals.each do |hos| %>
+      <span class="label label-default" style="font-weight: normal;"><%= hos.titleize %></span>
+    <% end %>
+    </td>
+
+
+     <td><span id="myChart"></span>
+      <%= doctor.payment_pie %></td>
+     <td><%= doctor.prescription_pie %></td>
   </tr>
 <% end %>
 </table>
+
+<%= will_paginate @doctors %>
  
 <br>

@@ -1,6 +1,13 @@
 <%= form_tag search_url, :method => 'get' do %>
   <p>
-    <%= text_field_tag :search, params[:search] %>
-    <%= submit_tag "Search", :name => nil %>
+  	<div class="input-group" style="margin: 15%;position: fixed; z-index: 5" >
+	  <input type="text" style="width: 40%;top: 2px;" name="search" id="search" class="form-control" placeholder="Search for doctor or specialization" aria-describedby="basic-addon1">
+	  <input type="text" style="width: 15% ;top: 2px;margin-left: 1%" name="location" id="location" class="form-control" placeholder="Location" aria-describedby="basic-addon1">
+	<button style="margin-left: 1%" class="btn btn-success" type="submit" value="Search">
+	    Search
+	</button>
+
+	</div>
+	<%= video_tag("ecg.mp4", :size => "100%", :autobuffer => true, autoplay: true, :effect=>"accelerate:100") %>
   </p>
 <% end %>

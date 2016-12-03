@@ -6,9 +6,31 @@
 
     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+
+    <style>
+    @font-face {  
+        font-family: 'balsemic';  
+        src: url(<%= asset_url("BalsamiqSansRegular.ttf") %> format('truetype');  
+        font-weight: normal;  
+        font-style: normal;  
+     }  
+     body {  
+        font-family: 'balsemic';  
+     }  
+
+      .arc text {
+        font: 10px sans-serif;
+        text-anchor: middle;
+      }
+
+      .arc path {
+        stroke: #fff;
+      }
+
+      </style>
   </head>
 
-  <body>
+  <body style="margin: 4%">
     <%= yield %>
   </body>
 </html>
