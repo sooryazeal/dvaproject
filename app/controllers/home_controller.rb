@@ -6,5 +6,7 @@ class HomeController < ApplicationController
 
   def search
   	@doctors, @count = PhysicianCompare.search(params)
+  	@payments = @doctors.map(&:payment_pie)
+  	@drugs = @doctors.map(&:prescription_pie)
   end
 end

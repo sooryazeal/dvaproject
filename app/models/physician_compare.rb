@@ -29,7 +29,7 @@ class PhysicianCompare < ApplicationRecord
 		if total_payment.present?
 			max_payment = total_payment.map(&:first).max
 			max_payer = total_payment.find{|x| x.first == max_payment}.last
-			return [max_payer, max_payment*100/sum]
+			return [{'payer': max_payer.titleize, 'percent': max_payment*100/sum}, {'payer': 'Others', 'percent': 100 - max_payment*100/sum}]
 		end
 	end
 
@@ -47,7 +47,7 @@ class PhysicianCompare < ApplicationRecord
 		if total_pres.present?
 			max_pres = total_pres.values.max
 			max_drug = total_pres.find{|k,v| v == max_pres}.first
-			return [max_pres*100/sum, max_drug]
+			return [{'drug': max_drug.titleize, 'percent': max_pres*100/sum}, {'drug': 'Others', 'percent': 100 - max_pres*100/sum}]
 		end
 	end
 

@@ -3,27 +3,49 @@
 <table class="table" style= "border-spacing: 0 2em;
     border-collapse: separate;">
  
-<% @doctors.each do |doctor| %>
+<% @doctors.each_with_index do |doctor, i| %>
   <tr style="margin-top: 4%;margin-bottom: 4%;background-color: #eee;">
-    <td><%= "Dr " + doctor.FirstName.titleize + " "%><%= doctor.MiddleName.titleize + " " %><%= doctor.LastName.titleize %><br>
+    <td align="center"><%= link_to "Dr " + doctor.FirstName.titleize + " " + doctor.MiddleName.titleize + " "  + doctor.LastName.titleize, root_url %><br>
     <%= doctor.City.titleize + ", "%><%= doctor.State %><br><br>
     Specialization<br>
     <% doctor.specializations.each do |spec| %>
       <span class="label label-default" style="font-weight: normal;"><%= spec.titleize %></span>
     <% end %>
     </td>
-    <td> </td>
-    <td>Experience<br><br><span style="background: white; border-radius: 50px;padding: 10% 10%;border: 1px solid black;font-size: 12px;"> <%= (Time.now.year - doctor.GradYear).to_s + "+" %></span></td>
-    <td>Hospitals<br>
+    <td align="center">    <br><br><br>
+Experience<br><br><span style="background: white; border-radius: 50px;padding: 10% 10%;border: 2px solid black;font-size: 12px;"> <%= (Time.now.year - doctor.GradYear).to_s + "+" %></span></td>
+    <td align="center"><br><br><br>Hospitals<br>
       <% doctor.hospitals.each do |hos| %>
-      <span class="label label-default" style="font-weight: normal;"><%= hos.titleize %></span>
+      <span class="hos label label-default" style="font-weight: normal;"><%= hos.titleize %></span>
     <% end %>
     </td>
 
+     <td style="width: 20%;" align="center">
+      <span class = "head"><br><br><br>Pharmaceutical Transactions</span><br>
+          <span id="myChart<%= i%>"></span>
 
-     <td><span id="myChart"></span>
-      <%= doctor.payment_pie %></td>
-     <td><%= doctor.prescription_pie %></td>
+      </td>
+     <td align="center">
+      <span class = "head"><br><br><br>Prescription     History</span><br>
+      <span id="myDrug<%= i%>"</span></td>
+    <td align="center" style="width: 23%;"><br><br><br>User Ratings<br>
+      <fieldset class="rating">
+    <input type="radio" id="star5" name="rating" value="5" /><label class = "full" for="star5" title="Awesome - 5 stars"></label>
+    <input type="radio" id="star4half" name="rating" value="4 and a half" /><label class="half" for="star4half" title="Pretty good - 4.5 stars"></label>
+    <input type="radio" id="star4" name="rating" value="4" /><label class = "full" for="star4" title="Pretty good - 4 stars"></label>
+    <input type="radio" id="star3half" name="rating" value="3 and a half" /><label class="half" for="star3half" title="Meh - 3.5 stars"></label>
+    <input type="radio" id="star3" name="rating" value="3" /><label class = "full" for="star3" title="Meh - 3 stars"></label>
+    <input type="radio" id="star2half" name="rating" value="2 and a half" /><label class="half" for="star2half" title="Kinda bad - 2.5 stars"></label>
+    <input type="radio" id="star2" name="rating" value="2" /><label class = "full" for="star2" title="Kinda bad - 2 stars"></label>
+    <input type="radio" id="star1half" name="rating" value="1 and a half" /><label class="half" for="star1half" title="Meh - 1.5 stars"></label>
+    <input type="radio" id="star1" name="rating" value="1" /><label class = "full" for="star1" title="Sucks big time - 1 star"></label>
+    <input type="radio" id="starhalf" name="rating" value="half" /><label class="half" for="starhalf" title="Sucks big time - 0.5 stars"></label>
+</fieldset>
+    </td>
+
+     <td align="center" style="padding: 40px"><br>
+      <span style="background: white; border-radius: 200px;padding: 40% 40%;border: 2px solid black;font-size: 12px;"> 827</span>
+    </td>
   </tr>
 <% end %>
 </table>
@@ -31,3 +53,105 @@
 <%= will_paginate @doctors %>
  
 <br>
+
+<%= javascript_tag type: 'text/javascript' do -%>
+var width = 100,
+    height = 100,
+    radius = Math.min(width, height) / 2;
+
+var color1 = d3.scale.ordinal()
+    .range(["#999", "#ccc"]);
+var color2 = d3.scale.ordinal()
+    .range(["#999", "#ccc"]);
+
+var arc = d3.svg.arc()
+    .outerRadius(radius - 10)
+    .innerRadius(0);
+
+
+var pie = d3.layout.pie()
+    .sort(null)
+    .value(function(d) { return d.percent; });
+
+var div = d3.select("body").append("div") 
+    .attr("class", "tooltip")       
+    .style("opacity", 0);
+
+for (i = 0; i < 30; i++) { 
+  data = <%= @payments.to_json.html_safe %>
+  if(data[i] != null) {
+        var tip = d3.tip()
+      .attr('class', 'd3-tip')
+      .offset([-10, 0])
+      .html(function(d) {
+        return "<span style='color:black'>" + d.data.payer + "</span>";
+      });
+    var svg = d3.selectAll("span#myChart" + i).append("svg")
+        .attr("width", width)
+        .attr("height", height)
+      .append("g")
+        .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+
+      var g = svg.selectAll(".arc")
+          .data(pie(data[i]))
+        .enter().append("g")
+          .attr("class", "arc")
+            .on('mouseover', tip.show)
+      .on('mouseout', tip.hide);
+
+
+      g.append("path")
+          .attr("d", arc)
+          .style("fill", function(d) { return color1(d.data.payer); });
+
+    function type(d) {
+      d.percent = +d.percent;
+      return d;
+    }
+
+    svg.call(tip);
+
+  }
+}
+
+for (i = 0; i < 30; i++) { 
+  data = <%= @drugs.to_json.html_safe %>
+  if(data[i] != null) {
+        var tip = d3.tip()
+      .attr('class', 'd3-tip')
+      .offset([-10, 0])
+      .html(function(d) {
+        return "<span style='color:black'>" + d.data.drug + "</span>";
+      });
+    var svg = d3.selectAll("span#myDrug" + i).append("svg")
+        .attr("width", width)
+        .attr("height", height)
+      .append("g")
+        .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+        .style("padding-top", "10px");
+
+
+      var g = svg.selectAll(".arc")
+          .data(pie(data[i]))
+        .enter().append("g")
+          .attr("class", "arc")
+            .on('mouseover', tip.show)
+      .on('mouseout', tip.hide);
+
+
+      g.append("path")
+          .attr("d", arc)
+          .style("fill", function(d) { return color2(d.data.drug); });
+
+    function type(d) {
+      d.percent = +d.percent;
+      return d;
+    }
+
+    svg.call(tip);
+
+  }
+}
+
+<% end -%>
