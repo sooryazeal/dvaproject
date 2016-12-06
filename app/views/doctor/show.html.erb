@@ -32,10 +32,10 @@
 
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
-    <body>
-        <center>
+    <body style='background:#333a56'>
+        <center >
 
-            <div id="viz"></div>
+            <div style='background':'lightgray' id="viz"></div>
             <%=javascript_tag do%>
     var height = 600;
     var width = 1200;
@@ -43,9 +43,20 @@
         var svg = d3.select("#viz")
         .append("svg")
         .attr("width", width)
-        .attr("height", height);
+        .attr("height", height)
+        .style("background","#f7f5e6");
 
 
+    var tip = d3.tip()
+  .attr('class', 'd3-tip')
+  .offset([-10, 0])
+  .html(function(d) {
+    if (d.text != null)
+        return "<strong>" + d.text + "</strong>";
+    return "<strong>" + d + "</strong>";
+  })
+
+svg.call(tip);
         circleData = [{text:<%=@scorex%>,r:60,cx:width/2,cy:height/2,stroke:"red"},
                      {text:<%=@payments_recieved%>,r:40,cx:900,cy:100,stroke:"orange"},
                      {text:<%=@drugs_prescribed%>,r:40,cx:900,cy:400,stroke:"blue"},
@@ -62,7 +73,9 @@
     .style("fill", function(d){return d.stroke})
     .attr("r", function(d){return d.r;})
     .attr("cx", function(d){return d.cx;})
-    .attr("cy", function(d){return d.cy;});
+    .attr("cy", function(d){return d.cy;})
+    .on('mouseover', tip.show)
+      .on('mouseout', tip.hide);;
 
 
     scoreCircle.append("text")
@@ -96,20 +109,13 @@
 
 
 
-    var tip = d3.tip()
-  .attr('class', 'd3-tip')
-  .offset([-10, 0])
-  .html(function(d) {
-    return "<strong>" + d + "</strong>";
-  })
 
-svg.call(tip);
     <!-- Payments Data -->
     
 
       var xscale = d3.scale.linear()
                         .domain([<%= @payments.min()%>, <%=@payments.max()%>+1])
-                        .range([50,200]);
+                        .range([50,190]);
 
       var yscale = d3.scale.linear()
                         .domain([0,5])
@@ -155,7 +161,7 @@ svg.call(tip);
 
       var xscale = d3.scale.linear()
                         .domain([<%= @prescriptions.min()%>, <%=@prescriptions.max()%>+1])
-                        .range([50,200]);
+                        .range([50,190]);
 
       var yscale = d3.scale.linear()
                         .domain([0,5])
@@ -252,6 +258,30 @@ svg.call(tip);
 
  
 })
+
+ svg.append("text")
+        .attr("x", 900)
+        .attr("y", 170 )
+        .attr("text-anchor", "middle")
+        .style("font-size", "17dpx")
+        .style("font-weight", "bold")
+        .text("Payments Received");
+
+svg.append("text")
+        .attr("x", 900)
+        .attr("y", 470 )
+        .attr("text-anchor", "middle")
+        .style("font-size", "17dpx")
+        .style("font-weight", "bold")
+        .text("Amount of Drugs Prescribed");
+
+svg.append("text")
+        .attr("x", 600)
+        .attr("y", 40 )
+        .attr("text-anchor", "middle")
+        .style("font-size", "35px")
+        .style("font-weight", "bold")
+        .text("ScoRx");
   
 
         
